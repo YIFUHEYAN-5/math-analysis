@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-font="1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="配合陈纪修、於崇华、金路《数学分析》（第三版上册）自学的个人笔记：逐节讲解与定理证明、例题、互动演示、概念自测和分级习题，内容包括集合与映射、数列极限、函数极限与连续函数。">
+<title>数学分析学习站</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%232b62d9'/%3E%3Ctext x='32' y='47' font-size='40' text-anchor='middle' fill='%23ffffff' font-family='Georgia,serif'%3E%CE%A3%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/katex/katex.min.a8d5de4d.css">
+<link rel="stylesheet" href="css/style.ea03e45d.css">
+<script>
+/* 尽早应用主题与字号，避免页面闪烁；data-web 标记是否通过网站访问（双击打开本地文件时为 0，隐藏“下载离线版”） */
+(function () {
+  document.documentElement.setAttribute('data-web', /^https?:$/.test(location.protocol) ? '1' : '0');
+  try {
+    var s = JSON.parse(localStorage.getItem('ma-study-v1') || 'null');
+    var st = (s && s.settings) || {};
+    var dark = st.theme ? st.theme === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    if (st.font != null) document.documentElement.setAttribute('data-font', String(st.font));
+  } catch (e) { /* 忽略 */ }
+})();
+</script>
+</head>
+<body>
+<button type="button" class="skip" onclick="var m=document.getElementById('main');m.focus();m.scrollIntoView();">跳到正文</button>
+<header class="topbar">
+  <button type="button" id="btn-menu" class="icon-btn" aria-label="打开或关闭目录" aria-controls="sidebar">☰</button>
+  <a class="brand" href="#home" title="回到首页">数学分析<span>学习站</span></a>
+  <div class="search-wrap" role="search">
+    <input id="search" type="search" placeholder="搜索定理、例题、概念……（按 / 键聚焦）" aria-label="站内搜索" autocomplete="off" spellcheck="false">
+    <div id="search-pop" class="search-pop" hidden></div>
+  </div>
+  <div class="top-actions">
+    <button type="button" id="btn-selftest" class="pill" aria-pressed="false" title="自测模式：折叠例题解答与定理证明，先自己想">自测<span class="long">模式</span></button>
+    <button type="button" id="btn-font" class="icon-btn" title="切换字号（小/中/大）" aria-label="切换字号">A±</button>
+    <button type="button" id="btn-serif" class="icon-btn" title="切换正文字体（黑体/宋体）" aria-label="切换正文字体">宋</button>
+    <button type="button" id="btn-theme" class="icon-btn" title="切换浅色/深色主题" aria-label="切换浅色或深色主题">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav id="sidebar" class="sidebar" aria-label="章节目录"></nav>
+  <div id="scrim" class="scrim"></div>
+  <main id="main" class="main" tabindex="-1">
+    <noscript><p>本站需要启用 JavaScript 才能显示内容。</p></noscript>
+    <p class="muted">正在加载……</p>
+  </main>
+  <footer class="site-foot">
+    <p>个人自编的数学分析学习笔记，与教材作者及出版社无关 · <a href="#home/about">关于本站</a></p>
+  </footer>
+</div>
+<button type="button" id="to-top" class="to-top" hidden aria-label="回到顶部" title="回到顶部">↑</button>
+
+<script src="vendor/katex/katex.min.6d07aa75.js"></script>
+<script src="vendor/katex/contrib/copy-tex.min.a0fd9fa4.js"></script>
+<script src="js/prepare.6b596eff.js"></script>
+<script src="js/expr.4deabbe0.js"></script>
+<script src="js/core.acd97241.js"></script>
+<script src="js/viz-base.cf6aa483.js"></script>
+<script src="js/viz-seq.74b2beae.js"></script>
+<script src="js/viz-func.26f21f18.js"></script>
+<script src="js/content/toc.b70c9f91.js"></script>
+<script src="js/content/home.3095d1bd.js"></script>
+<script src="js/content/ch1-1.50c78750.js"></script>
+<script src="js/content/ch1-2.00a3f0bc.js"></script>
+<script src="js/content/ch2-1.58961322.js"></script>
+<script src="js/content/ch2-2.042b323f.js"></script>
+<script src="js/content/ch2-3.69daea43.js"></script>
+<script src="js/content/ch2-4.236a0c9f.js"></script>
+<script src="js/content/ch3-1.1992f87c.js"></script>
+<script src="js/content/ch3-2.b2be43d9.js"></script>
+<script src="js/content/ch3-3.0b3e0ede.js"></script>
+<script src="js/content/ch3-4.c76b0de7.js"></script>
+</body>
+</html>
