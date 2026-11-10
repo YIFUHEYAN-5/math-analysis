@@ -203,7 +203,7 @@
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
     return null;
   }
-  function hasSec(id) { return !!MA.sections[id] && id !== 'home'; }
+  function hasSec(id) { return !!MA.sections[id] && id !== 'home' && id !== 'resources'; }
   function secNum(id) { return id.replace('-', '.'); }
 
   /* ================= 内容预处理与编号 ================= */
@@ -263,7 +263,7 @@
         if (tag === 'h2') head = textOf(blk, r.maths);
         var ref = MA.refs[id + '/' + blk.id];
         var label = ref ? (ref.label + ' ' + ref.num + (ref.title ? ' ' + ref.title : '')) :
-          (tag === 'h2' || tag === 'h3' ? textOf(blk, r.maths) : '');
+          (tag === 'h2' || tag === 'h3' ? textOf(blk, r.maths) : tag === 'x-res' ? MA.untoken(blk.getAttribute('t') || '', r.maths).trim() : '');
         var text = textOf(blk, r.maths);
         if (!text && !label) return;
         MA.index.push({ sec: id, anchor: blk.id, head: head, label: label, text: text, low: (label + ' ' + text).toLowerCase() });
@@ -714,6 +714,7 @@
       box.appendChild(h('a', { class: 'btn primary', href: '#1-1' }, '从第一章开始学习 →'));
     }
     box.appendChild(h('a', { class: 'btn', href: '#review' }, '错题本 · 笔记'));
+    box.appendChild(h('a', { class: 'btn', href: '#resources' }, '资源区 · PDF 资料'));
     return box;
   }
   function chapterCards() {
@@ -762,6 +763,51 @@
     document.title = '数学分析学习站';
     current = 'home';
     renderSidebar('home');
+  }
+
+  /* ================= 页面：资源区 ================= */
+  /* 源文件 js/content/resources.js：<x-res href="resources/名称.pdf" t="标题" tag="标签" sub="副标题" dl="下载文件名.pdf" pages="" size="">说明</x-res>
+   * 相邻的 <x-res> 合并为一组卡片（.res-grid）；pages、size 由 tools/build-pdfs.js 自动填写 */
+  function resCard(el) {
+    var href = el.getAttribute('href') || '';
+    var pages = el.getAttribute('pages'), size = el.getAttribute('size'), tag = el.getAttribute('tag');
+    var meta = [el.getAttribute('sub'), pages ? pages + ' 页' : '', size].filter(Boolean).join(' · ');
+    var body = h('div', { class: 'res-d' });
+    while (el.firstChild) body.appendChild(el.firstChild);
+    return h('section', { class: 'res-card', id: el.id || null },
+      h('div', { class: 'res-ic', 'aria-hidden': 'true' }, 'PDF'),
+      h('div', { class: 'res-m' },
+        h('h3', { class: 'res-t' }, el.getAttribute('t') || href, tag ? h('span', { class: 'res-tag' }, tag) : null),
+        meta ? h('div', { class: 'res-meta' }, meta) : null,
+        body,
+        h('div', { class: 'btn-row res-act' },
+          h('a', { class: 'btn primary', href: href, download: el.getAttribute('dl') || true }, '⇩ 下载 PDF'),
+          h('a', { class: 'btn', href: href, target: '_blank', rel: 'noopener' }, '在新标签页中打开'))));
+  }
+  function renderResources() {
+    var P = prepareSection('resources');
+    var art = h('article', { class: 'home res-page' });
+    if (P) {
+      curMaths = P.maths;
+      var body = h('div', { class: 'home-b' });
+      body.appendChild(P.frag.cloneNode(true));
+      art.appendChild(body);
+      enhance(body, 'resources');
+      $$('x-res', body).forEach(function (el) {
+        var prev = el.previousElementSibling;
+        var grid = prev && prev.classList.contains('res-grid') ? prev : null;
+        if (!grid) { grid = h('div', { class: 'res-grid' }); el.parentNode.insertBefore(grid, el); }
+        el.parentNode.removeChild(el);
+        grid.appendChild(resCard(el));
+      });
+      renderMath(art, P.maths);
+    } else art.appendChild(h('p', null, '资源区内容没有加载。'));
+    var main = $('#main');
+    main.innerHTML = '';
+    main.appendChild(art);
+    document.title = '资源区 · 数学分析学习站';
+    current = 'resources';
+    renderSidebar('resources');
   }
 
   /* ================= 页面：错题本与笔记 ================= */
@@ -910,7 +956,7 @@
     var title = e.label || e.head || (info ? info.title : e.sec);
     return h('a', { class: 'sr', href: '#' + e.sec + '/' + e.anchor },
       h('span', { class: 'sr-t', html: snippet(title, terms, 60) }),
-      h('span', { class: 'sr-s' }, (info ? info.chap.no + ' ' + info.no + ' ' + info.title : '') + (e.head && e.head !== title ? ' › ' + e.head : '')),
+      h('span', { class: 'sr-s' }, (info ? info.chap.no + ' ' + info.no + ' ' + info.title : e.sec === 'resources' ? '资源区' : '') + (e.head && e.head !== title ? ' › ' + e.head : '')),
       h('span', { class: 'sr-x', html: snippet(e.text, terms) }));
   }
   var popSel = -1;
@@ -952,7 +998,8 @@
     var kids = [];
     kids.push(h('div', { class: 'sb-top' },
       h('a', { href: '#home', class: 'sb-link' + (active === 'home' ? ' active' : '') }, '⌂ 首页 · 学习进度'),
-      h('a', { href: '#review', class: 'sb-link' + (active === 'review' ? ' active' : '') }, '✎ 错题本 · 笔记')));
+      h('a', { href: '#review', class: 'sb-link' + (active === 'review' ? ' active' : '') }, '✎ 错题本 · 笔记'),
+      h('a', { href: '#resources', class: 'sb-link' + (active === 'resources' ? ' active' : '') }, '⇩ 资源区 · PDF 资料')));
     (MA.toc || []).forEach(function (ch) {
       var avail = ch.sections.some(function (s) { return hasSec(s.id); });
       if (avail) {
@@ -1006,6 +1053,8 @@
     if (!raw || raw === 'home') return { page: 'home' };
     if (raw.indexOf('home/') === 0) return { page: 'home', anchor: raw.slice(5) };
     if (raw === 'review') return { page: 'review' };
+    if (raw === 'resources') return { page: 'res', anchor: '' };
+    if (raw.indexOf('resources/') === 0) return { page: 'res', anchor: raw.slice(10) };
     if (raw.indexOf('search/') === 0) return { page: 'search', q: raw.slice(7) };
     var m = /^(\d+-\d+)(?:\/(.+))?$/.exec(raw);
     if (m && hasSec(m[1])) return { page: 'sec', id: m[1], anchor: m[2] || '' };
@@ -1035,6 +1084,10 @@
       else window.scrollTo(0, 0);
     } else if (r.page === 'review') { renderReview(); window.scrollTo(0, 0); }
     else if (r.page === 'search') { renderSearch(r.q); window.scrollTo(0, 0); }
+    else if (r.page === 'res') {
+      if (current !== 'resources') renderResources();
+      if (r.anchor) goAnchor(r.anchor); else window.scrollTo(0, 0);
+    }
     else {
       renderHome();
       if (r.anchor) goAnchor(r.anchor); else window.scrollTo(0, 0);
